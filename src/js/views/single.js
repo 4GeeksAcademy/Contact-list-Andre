@@ -2,25 +2,26 @@ import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { FormUpdate } from "../component/formUpdate.js";
 
-export const Single = props => {
-	const { store, actions } = useContext(Context);
-	const params = useParams();
-	return (
-		<div className="jumbotron">
-			<h1 className="display-4">This will show the demo element: {store.demo[params.theid].title}</h1>
+// Componente funcional para la vista de un solo contacto
+export const Single = (props) => {
+  // Accede al estado global y las acciones mediante el contexto
+  const { store, actions } = useContext(Context);
 
-			<hr className="my-4" />
+  // Obtiene los parámetros de la URL utilizando react-router-dom
+  const params = useParams();
+  const contact_id = params.theid;
 
-			<Link to="/">
-				<span className="btn btn-primary btn-lg" href="#" role="button">
-					Back home
-				</span>
-			</Link>
-		</div>
-	);
+  return (
+    <div className="text-center">
+      {/* Renderiza el componente FormUpdate y pasa el ID del contacto como prop */}
+      <FormUpdate contact_id={contact_id} />
+    </div>
+  );
 };
 
+// Propiedades esperadas para el componente Single
 Single.propTypes = {
-	match: PropTypes.object
+  match: PropTypes.object,
 };

@@ -1,48 +1,46 @@
 import React, { useState, useEffect } from "react";
+
+// Importa la función `getState` del archivo `flux.js`
 import getState from "./flux.js";
 
-// Don't change, here is where we initialize our context, by default it's just going to be null.
+// Crea un contexto de React
 export const Context = React.createContext(null);
 
-// This function injects the global store to any view/component where you want to use it, we will inject the context to layout.js, you can see it here:
-// https://github.com/4GeeksAcademy/react-hello-webapp/blob/master/src/js/layout.js#L35
-const injectContext = PassedComponent => {
-	const StoreWrapper = props => {
-		//this will be passed as the contenxt value
-		const [state, setState] = useState(
-			getState({
-				getStore: () => state.store,
-				getActions: () => state.actions,
-				setStore: updatedStore =>
-					setState({
-						store: Object.assign(state.store, updatedStore),
-						actions: { ...state.actions }
-					})
-			})
-		);
+// Función para envolver un componente y proporcionar el contexto
+const injectContext = (PassedComponent) => {
+  // Componente funcional que actúa como un contenedor para el estado global y las acciones
+  const StoreWrapper = (props) => {
+    // Define el estado local utilizando el estado inicial proporcionado por `getState`
+    const [state, setState] = useState(
+      getState({
+        getStore: () => state.store,
+        getActions: () => state.actions,
+        setStore: (updatedStore) =>
+          setState({
+            store: Object.assign(state.store, updatedStore),
+            actions: { ...state.actions },
+          }),
+      })
+    );
 
-		useEffect(() => {
-			/**
-			 * EDIT THIS!
-			 * This function is the equivalent to "window.onLoad", it only runs once on the entire application lifetime
-			 * you should do your ajax requests or fetch api requests here. Do not use setState() to save data in the
-			 * store, instead use actions, like this:
-			 *
-			 * state.actions.loadSomeData(); <---- calling this function from the flux.js actions
-			 *
-			 **/
-		}, []);
+    // Efecto que se ejecuta después de que el componente se monta
+    useEffect(() => {
+      // Llama a la acción `ContactsList` para cargar la lista de contactos
+      state.actions.contactsList();
+      
+    }, []); // El efecto se ejecuta solo una vez al montar el componente
 
-		// The initial value for the context is not null anymore, but the current state of this component,
-		// the context will now have a getStore, getActions and setStore functions available, because they were declared
-		// on the state of this component
-		return (
-			<Context.Provider value={state}>
-				<PassedComponent {...props} />
-			</Context.Provider>
-		);
-	};
-	return StoreWrapper;
+    // Renderiza el componente envuelto en el contexto proporcionado
+    return (
+      <Context.Provider value={state}>
+        <PassedComponent {...props} />
+      </Context.Provider>
+    );
+  };
+
+  // Retorna el componente envuelto
+  return StoreWrapper;
 };
 
+// Exporta la función `injectContext`
 export default injectContext;
