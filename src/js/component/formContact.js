@@ -24,7 +24,7 @@ export const FormContact = () => {
     actions.contactsList();
     
     // Llama a la acción para crear un nuevo contacto
-    actions.createContactBook(full_name, email, phone, address);
+    actions.createContactBook(full_name, email, address, phone);
     
     // Redirige a la página principal después de la creación del contacto
     navigate("/");
